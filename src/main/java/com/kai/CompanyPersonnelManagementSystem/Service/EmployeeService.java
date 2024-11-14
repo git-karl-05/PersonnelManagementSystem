@@ -4,6 +4,9 @@ import com.kai.CompanyPersonnelManagementSystem.DTO.EmployeeDTO;
 import com.kai.CompanyPersonnelManagementSystem.Entity.Employee;
 import com.kai.CompanyPersonnelManagementSystem.Repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.Optional;
 
 import java.util.List;
@@ -29,6 +32,11 @@ public class EmployeeService {
 
     public List<EmployeeDTO> getAllEmployees() {
         return employeeRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    //returns sorted list
+    public Page<EmployeeDTO> getAllEmployees(Pageable pageable) {
+        return employeeRepository.findAll(pageable).map(this::convertToDTO);
     }
 
     public EmployeeDTO getEmployeeById(Long id) {

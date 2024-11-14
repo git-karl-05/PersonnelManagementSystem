@@ -3,6 +3,8 @@ package com.kai.CompanyPersonnelManagementSystem.Controller;
 import com.kai.CompanyPersonnelManagementSystem.DTO.EmployeeDTO;
 import com.kai.CompanyPersonnelManagementSystem.Entity.Employee;
 import com.kai.CompanyPersonnelManagementSystem.Service.EmployeeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,17 @@ public class Controller {
     }
 
     @GetMapping
-    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
-        return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
+    public ResponseEntity<?> getAllEmployees(
+            @RequestParam(required = false)Pageable pageable) {
+
+        if (pageable == null) {
+            List<EmployeeDTO> employeeDTOList = employeeService.getAllEmployees();
+            return new ResponseEntity<>(employeeDTOList, HttpStatus.OK);
+        } else {
+            Page<EmployeeDTO> employeeDTOPage =
+                    employeeService.getAllEmployees(pageable);
+            return new ResponseEntity<>(employeeDTOPage, HttpStatus.OK);
+        }
     }
 
     @GetMapping("/{id}")
