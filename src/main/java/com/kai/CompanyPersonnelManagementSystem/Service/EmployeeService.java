@@ -1,6 +1,7 @@
 package com.kai.CompanyPersonnelManagementSystem.Service;
 
 import com.kai.CompanyPersonnelManagementSystem.DTO.EmployeeDTO;
+import com.kai.CompanyPersonnelManagementSystem.DTO.EmployeeHierarchyDTO;
 import com.kai.CompanyPersonnelManagementSystem.Entity.Employee;
 import com.kai.CompanyPersonnelManagementSystem.Entity.Department;
 import com.kai.CompanyPersonnelManagementSystem.Repository.DepartmentRepository;
@@ -78,7 +79,7 @@ public class EmployeeService {
     public List<EmployeeDTO> getSubordinates(Long managerId) {
         Employee manager =
                 employeeRepository.findById(managerId).orElseThrow(() -> new IllegalArgumentException("Manager not found"));
-        return manager.getSubordinate().stream()
+        return manager.getSubordinates().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -87,6 +88,16 @@ public class EmployeeService {
         Employee manager =
                 employeeRepository.findById(managerId).orElseThrow(() -> new IllegalArgumentException("Manager not found"));
         return buildHierarchy(manager);
+    }
+
+    public EmployeeHierarchyDTO buildHierarchy(Employee employee) {
+        EmployeeHierarchyDTO hierarchyDTO = new EmployeeHierarchyDTO();
+        hierarchyDTO.setId(employee.getId());
+        hierarchyDTO.setName(employee.getName());
+        hierarchyDTO.setSubordinates(employee.getSubordinates().stream()
+                .map(this::buildHierarchy)
+                .collect(Collectors.toList()));
+        return hierarchyDTO;
     }
 
 

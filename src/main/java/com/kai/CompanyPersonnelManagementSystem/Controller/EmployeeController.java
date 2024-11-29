@@ -1,6 +1,7 @@
 package com.kai.CompanyPersonnelManagementSystem.Controller;
 
 import com.kai.CompanyPersonnelManagementSystem.DTO.EmployeeDTO;
+import com.kai.CompanyPersonnelManagementSystem.DTO.EmployeeHierarchyDTO;
 import com.kai.CompanyPersonnelManagementSystem.Entity.Employee;
 import com.kai.CompanyPersonnelManagementSystem.Service.EmployeeService;
 import org.springframework.data.domain.Page;
@@ -15,11 +16,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/employees")
-public class Controller {
+public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    public Controller(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
@@ -63,6 +64,30 @@ public class Controller {
         List<EmployeeDTO> employees = employeeService.getEmployees(name, departmentId);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
+
+    @GetMapping("/{employeeId}/manager")
+    public ResponseEntity<EmployeeDTO> getManager(@PathVariable Long employeeId) {
+        EmployeeDTO manager = employeeService.getManager(employeeId);
+        return (manager != null)
+                ? new ResponseEntity<>(manager, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+    }
+
+    @GetMapping("/{managerId}/subordinates")
+    public ResponseEntity<List<EmployeeDTO>> getSubordinates(@PathVariable Long managerId) {
+        List<EmployeeDTO> subordinates = employeeService.getSubordinates(managerId);
+        return (subordinates != null)
+                ? new ResponseEntity<>(subordinates, HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("{managerId}/hierarchy")
+    public ResponseEntity<EmployeeHierarchyDTO> getHierarchy(@PathVariable Long managerId) {
+        EmployeeHierarchyDTO hierarchy = employeeService.getHierarchy(managerId);
+        return new ResponseEntity<>(hierarchy, HttpStatus.OK);
+    }
+
 
     @PostMapping
     public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody Employee employee) {

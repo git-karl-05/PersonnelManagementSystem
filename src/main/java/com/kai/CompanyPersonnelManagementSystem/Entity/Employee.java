@@ -43,7 +43,7 @@ public abstract class Employee {
     public void setSubordinates(List<Employee> subordinates) {
         this.subordinates = subordinates;
     }
-    public List<Employee> getSubordinate() {
+    public List<Employee> getSubordinates() {
         return subordinates;
     }
     public void setDepartment(Department department) {
